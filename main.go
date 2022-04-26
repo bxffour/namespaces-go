@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"syscall"
@@ -17,7 +17,16 @@ func init() {
 }
 
 func nsInitialisation() {
-	fmt.Printf(">> initialisation code goes here << \n\n")
+	newroot := os.Args[1]
+
+	if err := mountProc(newroot); err != nil {
+		log.Fatalf("error mounting /proc - %s", err)
+	}
+
+	if err := pivot_root(newroot); err != nil {
+		log.Fatalf("error running pivot_root - %s", err)
+	}
+
 	nsRun()
 }
 
@@ -28,11 +37,15 @@ func nsRun() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
+	cmd.Env = []string{`PS1=\w \$ `}
+
 	must(cmd.Run())
 }
 
 func main() {
-	cmd := reexec.Command("nsInitialisation")
+	var rootfsPath = "/tmp/ns-process/rootfs"
+
+	cmd := reexec.Command("nsInitialisation", rootfsPath)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -41,10 +54,10 @@ func main() {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		// flags for the clone command
 		Cloneflags: syscall.CLONE_NEWNS |
-			syscall.CLONE_NEWNET |
+			syscall.CLONE_NEWUTS |
 			syscall.CLONE_NEWIPC |
 			syscall.CLONE_NEWPID |
-			syscall.CLONE_NEWUTS |
+			syscall.CLONE_NEWNET |
 			syscall.CLONE_NEWUSER,
 
 		// this is to break the mountns' link to the initial ns.
