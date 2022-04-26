@@ -27,6 +27,10 @@ func nsInitialisation() {
 		log.Fatalf("error running pivot_root - %s", err)
 	}
 
+	if err := syscall.Sethostname([]byte("sandbox")); err != nil {
+		log.Fatalf("error setting hostname - %s", err)
+	}
+
 	nsRun()
 }
 
