@@ -5,6 +5,9 @@ namespaces-go used namespaces to run a shell in a sandboxed environment. This is
 educational project as a result of my pursuit to understanding to fundamental cogs that 
 make containers possible.
 
+Demo
+--------------
+
 ![namespaces-go](https://github.com/bxffour/namespaces-go/blob/main/assets/gif/ns.gif)
 
 Installation
