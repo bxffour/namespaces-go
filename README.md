@@ -3,7 +3,7 @@ namespaces-go
 
 Utilizes linux namespaces to sandbox a given rootfs and open a shell.
 
-![namespaces-go]()
+![namespaces-go](https://github.com/bxffour/namespaces-go/blob/main/assets/gif/ns.gif)
 
 Installation
 --------------
