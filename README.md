@@ -1,8 +1,9 @@
 namespaces-go
 =================
 
-namespaces-go used namespaces to run a shell in a sandboxed environment. This is an 
-educational project to grasp how namespaces work.
+namespaces-go used namespaces to run a shell in a sandboxed environment. This is a purely
+educational project as a result of my pursuit to understanding to fundamental cogs that 
+make containers possible.
 
 ![namespaces-go](https://github.com/bxffour/namespaces-go/blob/main/assets/gif/ns.gif)
 
