@@ -3,7 +3,8 @@ package main
 import (
 	"os"
 	"path/filepath"
-	"syscall"
+
+	"golang.org/x/sys/unix"
 )
 
 func pivot_root(newroot string) error {
@@ -13,11 +14,11 @@ func pivot_root(newroot string) error {
 	// bind mounting the newroot to itself - this is a slight hack
 	// to work around the pivot_root requirement (the newroot must
 	// be a path to a mount point `pivot_root(2)`)
-	if err := syscall.Mount(
+	if err := unix.Mount(
 		newroot,
 		newroot,
 		"",
-		syscall.MS_BIND|syscall.MS_REC,
+		unix.MS_BIND|unix.MS_REC,
 		"",
 	); err != nil {
 		return err
@@ -32,7 +33,7 @@ func pivot_root(newroot string) error {
 	}
 
 	// calling pivot_root
-	if err := syscall.PivotRoot(newroot, putold); err != nil {
+	if err := unix.PivotRoot(newroot, putold); err != nil {
 		return err
 	}
 
@@ -48,7 +49,7 @@ func pivot_root(newroot string) error {
 
 	// unmounting putold, which now lives at /.pivot
 	putold = "/.pivot_root"
-	if err := syscall.Unmount(putold, syscall.MNT_DETACH); err != nil {
+	if err := unix.Unmount(putold, unix.MNT_DETACH); err != nil {
 		return err
 	}
 
@@ -70,7 +71,7 @@ func mountProc(newroot string) error {
 	data := ""
 
 	os.MkdirAll(target, 0755)
-	if err := syscall.Mount(
+	if err := unix.Mount(
 		source,
 		target,
 		fstype,
@@ -88,11 +89,11 @@ func mountSys(newroot string) error {
 	source := ""
 	target := filepath.Join(newroot, "/sys")
 	fstype := "sysfs"
-	flags := syscall.MS_NOSUID | syscall.MS_NOEXEC | syscall.MS_NODEV | syscall.MS_RDONLY
+	flags := unix.MS_NOSUID | unix.MS_NOEXEC | unix.MS_NODEV | unix.MS_RDONLY
 	data := ""
 
 	os.MkdirAll(target, 0755)
-	if err := syscall.Mount(
+	if err := unix.Mount(
 		source,
 		target,
 		fstype,
