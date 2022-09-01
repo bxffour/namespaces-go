@@ -4,8 +4,6 @@ import (
 	"os"
 	"path/filepath"
 	"syscall"
-
-	"golang.org/x/sys/unix"
 )
 
 func pivot_root(newroot string) error {
@@ -63,47 +61,6 @@ func pivot_root(newroot string) error {
 
 }
 
-// func pivot_root(rootfs string) error {
-
-// 	oldroot, err := unix.Open("/", unix.O_DIRECTORY|unix.O_RDONLY, 0)
-// 	if err != nil {
-// 		return &os.PathError{Op: "open", Path: "/", Err: err}
-// 	}
-// 	defer unix.Close(oldroot)
-
-// 	newroot, err := unix.Open(rootfs, unix.O_DIRECTORY|unix.O_RDONLY, 0)
-// 	if err != nil {
-// 		return &os.PathError{Op: "open", Path: rootfs, Err: err}
-// 	}
-// 	defer unix.Close(newroot)
-
-// 	if err := unix.Fchdir(newroot); err != nil {
-// 		return &os.PathError{Op: "fchdir", Path: "fd " + strconv.Itoa(newroot), Err: err}
-// 	}
-
-// 	if err := unix.PivotRoot(".", "."); err != nil {
-// 		return &os.PathError{Op: "pivot_root", Path: ".", Err: err}
-// 	}
-
-// 	if err := unix.Fchdir(oldroot); err != nil {
-// 		return &os.PathError{Op: "fchdir", Path: "fd " + strconv.Itoa(oldroot), Err: err}
-// 	}
-
-// 	if err := unix.Mount("", ".", "", unix.MS_SLAVE|unix.MS_REC, ""); err != nil {
-// 		return err
-// 	}
-
-// 	if err := unix.Unmount(".", unix.MNT_DETACH); err != nil {
-// 		return err
-// 	}
-
-// 	if err := unix.Chdir("/"); err != nil {
-// 		return &os.PathError{Op: "chdir", Path: "/", Err: err}
-// 	}
-
-// 	return nil
-// }
-
 // mountProc mounts the proc fs in the new root dir
 func mountProc(newroot string) error {
 	source := "proc"
@@ -146,37 +103,4 @@ func mountSys(newroot string) error {
 	}
 
 	return nil
-}
-
-func mountCgroupfs(newroot string) error {
-	source := ""
-	target := filepath.Join(newroot, "/sys/fs/cgroup")
-	fstype := "cgroup"
-	flags := syscall.MS_NOSUID | syscall.MS_NOEXEC | syscall.MS_NODEV | syscall.MS_RELATIME | syscall.MS_RDONLY
-	data := ""
-
-	if err := os.MkdirAll(target, 0755); err != nil {
-		return err
-	}
-
-	if err := syscall.Mount(
-		source,
-		target,
-		fstype,
-		uintptr(flags),
-		data,
-	); err != nil {
-		return err
-	}
-
-	err := unix.Mount(
-		source,
-		target,
-		fstype,
-		uintptr(flags),
-		data,
-	)
-
-	return err
-
 }

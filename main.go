@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"os"
 	"os/exec"
@@ -18,10 +19,6 @@ func init() {
 
 func nsInitialisation() {
 	newroot := os.Args[1]
-
-	// if err := mountCgroupfs(newroot); err != nil {
-	// 	log.Fatalf("error mounting cgroupfs - %sclear", err)
-	// }
 
 	if err := mountProc(newroot); err != nil {
 		log.Fatalf("error mounting /proc - %s", err)
@@ -58,6 +55,14 @@ func nsRun() {
 
 func main() {
 	var rootfsPath = "/tmp/ns-process/rootfs"
+
+	if len(os.Args) > 2 {
+		log.Fatalln(errors.New("invalid args: arguments exceeded expected amount"))
+	}
+
+	if len(os.Args) == 2 {
+		rootfsPath = os.Args[1]
+	}
 
 	cmd := reexec.Command("nsInitialisation", rootfsPath)
 
@@ -101,8 +106,4 @@ func main() {
 	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func must(err error) {
-	panic(err)
 }
