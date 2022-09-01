@@ -19,8 +19,16 @@ func init() {
 func nsInitialisation() {
 	newroot := os.Args[1]
 
+	// if err := mountCgroupfs(newroot); err != nil {
+	// 	log.Fatalf("error mounting cgroupfs - %sclear", err)
+	// }
+
 	if err := mountProc(newroot); err != nil {
 		log.Fatalf("error mounting /proc - %s", err)
+	}
+
+	if err := mountSys(newroot); err != nil {
+		log.Fatalf("error mounting /sys - %s", err)
 	}
 
 	if err := pivot_root(newroot); err != nil {
@@ -43,7 +51,9 @@ func nsRun() {
 
 	cmd.Env = []string{`PS1=\w \$ `}
 
-	must(cmd.Run())
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
@@ -88,7 +98,9 @@ func main() {
 		},
 	}
 
-	must(cmd.Run())
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func must(err error) {
