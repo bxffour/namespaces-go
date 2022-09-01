@@ -1,7 +1,8 @@
 namespaces-go
 =================
 
-Utilizes linux namespaces to sandbox a given rootfs and open a shell.
+namespaces-go used namespaces to run a shell in a sandboxed environment. This is an 
+educational project to grasp how namespaces work.
 
 ![namespaces-go](https://github.com/bxffour/namespaces-go/blob/main/assets/gif/ns.gif)
 
@@ -29,3 +30,9 @@ Sandbox hardcoded rootfs
 Sandbox rootfs provided through cmdline args
 
     $ ./bin/ns /path/to/rootfs
+
+Credit
+---------------
+
+1. Namespaces in Go blog by Ed King - https://medium.com/@teddyking/namespaces-in-go-basics-
+2. Liz Rice's demo on containers - https://youtu.be/8fi7uSYlOdc
