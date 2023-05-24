@@ -56,11 +56,11 @@ func nsRun() {
 func main() {
 	var rootfsPath = "/tmp/ns-process/rootfs"
 
-	if len(os.Args) > 2 {
+	if len(os.Args) > 3 {
 		log.Fatalln(errors.New("invalid args: arguments exceeded expected amount"))
 	}
 
-	if len(os.Args) == 2 {
+	if len(os.Args) >= 2 {
 		rootfsPath = os.Args[1]
 	}
 

@@ -8,7 +8,7 @@ make containers possible.
 Demo
 --------------
 
-![namespaces-go](https://github.com/bxffour/namespaces-go/blob/main/assets/gif/ns.gif)
+![namespaces-go](https://vhs.charm.sh/vhs-3cg3qwjrdVCdHXrylLKizb.gif)
 
 Installation
 --------------
